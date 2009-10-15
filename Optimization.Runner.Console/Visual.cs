@@ -9,6 +9,11 @@ namespace Optimization.Runner.Console
 		{
 		}
 		
+		public override void Run()
+		{
+			System.Console.WriteLine();
+		}
+		
 		protected override void OnError(object source, string message)
 		{
 			System.Console.ForegroundColor = ConsoleColor.Red;
@@ -25,7 +30,7 @@ namespace Optimization.Runner.Console
 	
 		protected override void OnProgress(object source, double progress)
 		{
-			int num = System.Console.BufferWidth;
+			int num = System.Console.WindowWidth;
 			string prefix = "Progress:";
 			string perc = String.Format("{0:###.##}%", progress * 100);
 	
@@ -33,9 +38,9 @@ namespace Optimization.Runner.Console
 			int stars = (int)(len * progress);
 			string ss = "";
 	
-			for (int i = 0; i < stars; ++i)
+			for (int i = 0; i < len; ++i)
 			{
-				ss += "*";
+				ss += i < len * progress ? "*" : " ";
 			}
 			
 			System.Console.Write("{0} [{1}] {2}\r", prefix, ss.PadRight(len - stars), perc);
@@ -43,9 +48,7 @@ namespace Optimization.Runner.Console
 	
 		protected override void OnStatus(object source, string message)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Green;
-			System.Console.WriteLine("[Status] " + message);
-			System.Console.ResetColor();
+			System.Console.Title = "[Status] " + message;
 		}
 	}
 }

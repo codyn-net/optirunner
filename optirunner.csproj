@@ -14,7 +14,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>optirunner\bin\Debug</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
@@ -22,19 +22,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>optirunner\bin\Release</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Optimization, Version=1.0.3575.23534, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.packeteer\install\lib\optimization-sharp\Optimization.dll</HintPath>
-    </Reference>
     <Reference Include="protobuf-net, Version=1.0.0.262, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.packeteer\install\lib\optimization-sharp\protobuf-net.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\optimization-sharp\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Optimization, Version=1.0.3601.30343, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\optimization-sharp\Optimization.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

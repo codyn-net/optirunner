@@ -43,7 +43,7 @@ namespace Optimization.Runner.Console
 				ss += i < len * progress ? "*" : " ";
 			}
 			
-			System.Console.Write("{0} [{1}] {2}\r", prefix, ss.PadRight(len - stars), perc);
+			System.Console.Write("{0} [{1}] {2}\r", prefix, ss.PadRight(System.Math.Max(ss.Length, len - stars)), perc);
 		}
 	
 		protected override void OnStatus(object source, string message)

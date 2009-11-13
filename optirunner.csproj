@@ -28,13 +28,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Reference Include="Optimization, Version=1.0.3604.24483, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\liboptimization-sharp\Optimization.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net, Version=1.0.0.262, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\optimization-sharp\protobuf-net.dll</HintPath>
-    </Reference>
-    <Reference Include="Optimization, Version=1.0.3601.30343, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\optimization-sharp\Optimization.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\liboptimization-sharp\protobuf-net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

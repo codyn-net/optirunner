@@ -1,0 +1,20 @@
+Source: optirunner
+Priority: extra
+Maintainer: Jesse van den Kieboom <jesse.vandenkieboom@epfl.ch>
+Build-Depends: debhelper (>= 7),
+               autotools-dev,
+			   cdbs,
+			   pkg-config,
+			   mono-devel | mono-gmcs,
+			   liboptimization-sharp1
+Standards-Version: 3.8.0
+Section: libs
+Homepage: http://birg.epfl.ch
+
+Package: optirunner
+Section: libs
+Architecture: any
+Depends: liboptimization-sharp1
+Recommends: liboptimizers-sharp1
+Description: Optimization framework job runner
+ Job runner the optimization framework

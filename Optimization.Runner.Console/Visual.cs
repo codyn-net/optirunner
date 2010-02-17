@@ -31,10 +31,18 @@ namespace Optimization.Runner.Console
 		protected override void OnProgress(object source, double progress)
 		{
 			int num = System.Console.WindowWidth;
+			
+			if (num == 0)
+			{
+				num = 78;
+			}
+
 			string prefix = "Progress:";
-			string perc = String.Format("{0:###.##}%", progress * 100);
+			string perc = String.Format("{0:###.00}%", progress * 100);
+			
+			perc = perc.PadLeft(7);
 	
-			int len = num - prefix.Length - perc.Length - 4;
+			int len = num - prefix.Length - 10;
 			int stars = (int)(len * progress);
 			string ss = "";
 	
@@ -43,7 +51,7 @@ namespace Optimization.Runner.Console
 				ss += i < len * progress ? "*" : " ";
 			}
 			
-			System.Console.Write("{0} [{1}] {2}\r", prefix, ss.PadRight(System.Math.Max(ss.Length, len - stars)), perc);
+			System.Console.Write("{0} [{1}] {2} \r", prefix, ss.PadRight(System.Math.Max(ss.Length, len - stars)), perc);
 		}
 	
 		protected override void OnStatus(object source, string message)

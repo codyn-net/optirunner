@@ -28,7 +28,7 @@ namespace Optimization.Runner
 	public abstract class Application : Optimization.Application
 	{
 		string[] d_jobFiles;
-		List<string> d_optimizerAssemblies;
+		List<string> d_assemblies;
 		string d_dataDirectory;
 		string d_listOptimizers;
 	
@@ -48,13 +48,13 @@ namespace Optimization.Runner
 		{
 			base.Initialize();
 
-			d_optimizerAssemblies = new List<string>();
+			d_assemblies = new List<string>();
 			d_listOptimizers = null;
 		}
 		
 		public void Run()
 		{
-			LoadOptimizerAssemblies();
+			LoadAssemblies();
 			
 			if (d_listOptimizers != null)
 			{
@@ -114,9 +114,9 @@ namespace Optimization.Runner
 			}
 		}
 		
-		private void LoadOptimizerAssemblies()
+		private void LoadAssemblies()
 		{
-			foreach (string s in d_optimizerAssemblies)
+			foreach (string s in d_assemblies)
 			{			
 				try
 				{
@@ -250,16 +250,16 @@ namespace Optimization.Runner
 			System.Console.WriteLine();
 		}
 		
-		private void AddOptimizerAssembly(string s)
+		private void AddAssembly(string s)
 		{
-			d_optimizerAssemblies.Add(s);
+			d_assemblies.Add(s);
 		}
 		
 		protected override void AddOptions(NDesk.Options.OptionSet optionSet)
 		{
 			base.AddOptions(optionSet);
 			
-			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) { AddOptimizerAssembly(s); });
+			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) { AddAssembly(s); });
 			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) { d_dataDirectory = s; });
 			optionSet.Add("l:|list:", "List available optimizers", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
 		}

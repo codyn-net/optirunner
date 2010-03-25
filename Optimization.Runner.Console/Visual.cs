@@ -20,6 +20,13 @@ namespace Optimization.Runner.Console
 			System.Console.Error.WriteLine("[Error] " + message);
 			System.Console.ResetColor();
 		}
+		
+		protected override void OnMessage(object source, string message)
+		{
+			System.Console.ForegroundColor = ConsoleColor.Green;
+			System.Console.Error.WriteLine("[Message] " + message);
+			System.Console.ResetColor();
+		}
 	
 		protected override void OnJob(object source, Optimization.Job job)
 		{

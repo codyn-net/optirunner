@@ -93,7 +93,7 @@ namespace Optimization.Runner
 				try
 				{
 					// Create new job
-					Job job = new Job(filename);
+					Job job = Job.NewFromXml(filename);
 	
 					// Set optimizer storage location
 					string datafile = System.IO.Path.Combine(d_dataDirectory, job.Name + ".db");
@@ -104,7 +104,7 @@ namespace Optimization.Runner
 				}
 				catch (Exception e)
 				{
-					System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e);
+					System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e.Message);
 				}
 			}
 			

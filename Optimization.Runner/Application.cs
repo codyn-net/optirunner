@@ -90,21 +90,39 @@ namespace Optimization.Runner
 	
 			foreach (string filename in d_jobFiles)
 			{
+				if (!System.IO.File.Exists(filename))
+				{
+					Error("Job file `{0}' does not exist!", filename);
+					continue;
+				}
+
 				try
 				{
 					// Create new job
-					Job job = Job.NewFromXml(filename);
-	
-					// Set optimizer storage location
-					string datafile = System.IO.Path.Combine(d_dataDirectory, job.Name + ".db");
-					job.Optimizer.Storage.Uri = datafile;
+					Job job;
+
+					if (filename.EndsWith(".db"))
+					{
+						job = new Job();
+						job.LoadFromStorage(filename);
+					}
+					else
+					{
+						job = Job.NewFromXml(filename);
+					
+						// Set optimizer storage location
+						string datafile = System.IO.Path.Combine(d_dataDirectory, job.Name + ".db");
+						job.Optimizer.Storage.Uri = datafile;
+						
+						job.Initialize();
+					}
 					
 					// Run job
 					Run(job);
 				}
 				catch (Exception e)
 				{
-					System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e.Message);
+					System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e);
 				}
 			}
 			

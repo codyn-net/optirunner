@@ -31,6 +31,7 @@ namespace Optimization.Runner
 		List<string> d_assemblies;
 		string d_dataDirectory;
 		string d_listOptimizers;
+		string d_filename;
 	
 		public Application(ref string[] args) : base(ref args)
 		{
@@ -90,14 +91,46 @@ namespace Optimization.Runner
 	
 			foreach (string filename in d_jobFiles)
 			{
+				if (!System.IO.File.Exists(filename))
+				{
+					Error("Job file `{0}' does not exist!", filename);
+					continue;
+				}
+
 				try
 				{
 					// Create new job
-					Job job = new Job(filename);
-	
-					// Set optimizer storage location
-					string datafile = System.IO.Path.Combine(d_dataDirectory, job.Name + ".db");
-					job.Optimizer.Storage.Uri = datafile;
+					Job job;
+
+					if (filename.EndsWith(".db"))
+					{
+						job = new Job();
+						job.LoadFromStorage(filename);
+					}
+					else
+					{
+						job = Job.NewFromXml(filename);
+
+						string datafile;
+
+						// Set optimizer storage location
+						if (d_filename == null)
+						{
+							datafile = job.Name + ".db";
+						}
+						else
+						{
+							datafile = d_filename;
+						}
+						
+						if (!System.IO.Path.IsPathRooted(datafile))
+						{
+							datafile = System.IO.Path.Combine(d_dataDirectory, datafile);
+						}
+
+						job.Optimizer.Storage.Uri = datafile;
+						job.Initialize();
+					}
 					
 					// Run job
 					Run(job);
@@ -262,6 +295,7 @@ namespace Optimization.Runner
 			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) { AddAssembly(s); });
 			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) { d_dataDirectory = s; });
 			optionSet.Add("l:|list:", "List available optimizers", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
+			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
 		}
 	}
 }

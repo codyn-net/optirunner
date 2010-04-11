@@ -20,6 +20,13 @@ namespace Optimization.Runner.Console
 			System.Console.Error.WriteLine("[Error] " + message);
 			System.Console.ResetColor();
 		}
+		
+		protected override void OnMessage(object source, string message)
+		{
+			System.Console.ForegroundColor = ConsoleColor.Green;
+			System.Console.Error.WriteLine("[Message] " + message);
+			System.Console.ResetColor();
+		}
 	
 		protected override void OnJob(object source, Optimization.Job job)
 		{
@@ -42,7 +49,7 @@ namespace Optimization.Runner.Console
 			
 			perc = perc.PadLeft(7);
 	
-			int len = num - prefix.Length - 10;
+			int len = num - prefix.Length - 12;
 			int stars = (int)(len * progress);
 			string ss = "";
 	

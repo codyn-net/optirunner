@@ -1,7 +1,7 @@
 dnl Warning: This is an automatically generated file, do not edit!
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.54])
-AC_INIT(optirunner, 1.3)
+AC_INIT(optirunner, 2.0)
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -46,11 +46,11 @@ fi
 
 
 dnl package checks, common for all configs
-PKG_CHECK_MODULES([OPTIMIZATION_SHARP], [optimization-sharp])
+PKG_CHECK_MODULES([OPTIMIZATION_SHARP], [optimization-sharp-2.0])
 
 dnl find assembly paths for unstable installed assemblies that will be
 dnl copied into monoskel installation directory for local usage with the app
-UNSTABLE_INSTALL_ASSEMBLIES="optimization-sharp"
+UNSTABLE_INSTALL_ASSEMBLIES="optimization-sharp-2.0"
 INSTALLED_ASSEMBLIES="`$PKG_CONFIG --variable=Libraries $UNSTABLE_INSTALL_ASSEMBLIES`"
 AC_SUBST(INSTALLED_ASSEMBLIES)
 

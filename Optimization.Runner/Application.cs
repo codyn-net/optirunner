@@ -141,6 +141,8 @@ namespace Optimization.Runner
 				}
 			}
 			
+			Stop();
+			
 			if (visual != null)
 			{
 				visual.Run();

@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7),
 			   cdbs,
 			   pkg-config,
 			   mono-devel | mono-gmcs,
-			   liboptimization2-sharp (>= 2.5)
+			   liboptimization2-sharp (>= 2.8)
 Standards-Version: 3.8.0
 Section: libs
 Homepage: http://birg.epfl.ch
@@ -14,7 +14,7 @@ Homepage: http://birg.epfl.ch
 Package: optirunner
 Section: libs
 Architecture: any
-Depends: liboptimization2-sharp (>= 2.5)
+Depends: liboptimization2-sharp (>= 2.8)
 Recommends: liboptimizers2-sharp
 Description: Optimization framework job runner
  Job runner the optimization framework

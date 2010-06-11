@@ -32,10 +32,12 @@ namespace Optimization.Runner
 		string d_dataDirectory;
 		string d_listOptimizers;
 		string d_filename;
+		uint d_repeat;
 	
 		public Application(ref string[] args) : base(ref args)
 		{
 			d_jobFiles = args;
+			d_repeat = 1;
 		}
 		
 		protected abstract Visual CreateVisual();
@@ -97,47 +99,50 @@ namespace Optimization.Runner
 					continue;
 				}
 
-				try
+				for (uint i = 0; i < d_repeat; ++i)
 				{
-					// Create new job
-					Job job;
-
-					if (filename.EndsWith(".db"))
+					try
 					{
-						job = new Job();
-						job.LoadFromStorage(filename);
-					}
-					else
-					{
-						job = Job.NewFromXml(filename);
+						// Create new job
+						Job job;
 
-						string datafile;
-
-						// Set optimizer storage location
-						if (d_filename == null)
+						if (filename.EndsWith(".db"))
 						{
-							datafile = job.Name + ".db";
+							job = new Job();
+							job.LoadFromStorage(filename);
 						}
 						else
 						{
-							datafile = d_filename;
+							job = Job.NewFromXml(filename);
+	
+							string datafile;
+	
+							// Set optimizer storage location
+							if (d_filename == null)
+							{
+								datafile = job.Name + ".db";
+							}
+							else
+							{
+								datafile = d_filename;
+							}
+							
+							if (!System.IO.Path.IsPathRooted(datafile))
+							{
+								datafile = System.IO.Path.Combine(d_dataDirectory, datafile);
+							}
+	
+							job.Optimizer.Storage.Uri = datafile;
+							job.Initialize();
 						}
-						
-						if (!System.IO.Path.IsPathRooted(datafile))
-						{
-							datafile = System.IO.Path.Combine(d_dataDirectory, datafile);
-						}
-
-						job.Optimizer.Storage.Uri = datafile;
-						job.Initialize();
-					}
 					
-					// Run job
-					Run(job);
-				}
-				catch (Exception e)
-				{
-					System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e);
+						// Run job
+						Run(job);
+					}
+					catch (Exception e)
+					{
+						System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e);
+					}
 				}
 			}
 			
@@ -164,6 +169,7 @@ namespace Optimization.Runner
 				}
 			}
 		}
+
 		private string OptimizerName(Type type)
 		{
 			string name = Optimizer.GetName(type);
@@ -298,6 +304,7 @@ namespace Optimization.Runner
 			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) { d_dataDirectory = s; });
 			optionSet.Add("l:|list:", "List available optimizers", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
 			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
+			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) { d_repeat = UInt32.Parse(s); });
 		}
 	}
 }

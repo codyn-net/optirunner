@@ -63,11 +63,11 @@ namespace Optimization.Runner
 			{
 				if (d_listOptimizers == "")
 				{
-					ShowOptimizers();
+					ShowTypes();
 				}
 				else
 				{
-					ShowOptimizers(d_listOptimizers);
+					ShowType(d_listOptimizers);
 				}
 				
 				Environment.Exit(0);
@@ -169,13 +169,11 @@ namespace Optimization.Runner
 				}
 			}
 		}
-
-		private string OptimizerName(Type type)
+		
+		private string TypeName(Type type, string name, string prefix)
 		{
-			string name = Optimizer.GetName(type);
 			string ns = type.Namespace;
-			
-			string prefix = "Optimization.Optimizers.";
+			prefix += ".";
 			
 			if (ns.StartsWith(prefix))
 			{
@@ -191,6 +189,16 @@ namespace Optimization.Runner
 				return ns + "." + name;
 			}
 		}
+
+		private string OptimizerName(Type type)
+		{
+			return TypeName(type, Optimizer.GetName(type), "Optimization.Optimizers");
+		}
+		
+		private string ExtensionName(Type type)
+		{
+			return TypeName(type, Extension.GetName(type), "Optimization.Optimizers.Extensions");
+		}
 		
 		private void PrintColored(string key, string val)
 		{
@@ -200,28 +208,43 @@ namespace Optimization.Runner
 			System.Console.WriteLine(val);
 		}
 		
-		private void ShowOptimizers(string optimizer)
+		private void ShowType(string name)
 		{
-			Optimizer opt = Registry.Create(optimizer);
+			Optimizer opt = null;
 			
-			if (opt == null)
+			try
 			{
-				System.Console.Error.WriteLine("Could not find optimizer: {0}", optimizer);
-				return;
+				opt = Registry.Create(name);
+			}
+			catch
+			{
 			}
 			
-			Type type = opt.GetType();
-			string description = Optimizer.GetDescription(type);
-			
-			PrintColored("Name", OptimizerName(type));
-			PrintColored("Namespace", type.Namespace);
-			PrintColored("Description", description != null ? description : "No description available");
+			if (opt != null)
+			{
+				ShowOptimizer(opt);
+				return;
+			}
+
+			Extension ext = Extension.Create(name);
+				
+			if (ext != null)
+			{
+				ShowExtension(ext);
+				return;
+			}
+
+			System.Console.Error.WriteLine("Could not find optimizer or extension `{0}'", name);
+		}
+		
+		private void ShowSettings(Settings settings)
+		{
 			PrintColored("Settings", "");
 			System.Console.WriteLine();
 		
-			foreach (KeyValuePair<string, object> setting in opt.Configuration)
+			foreach (KeyValuePair<string, object> setting in settings)
 			{
-				string desc = opt.Configuration.Description(setting.Key);
+				string desc = settings.Description(setting.Key);
 				
 				if (desc != null)
 				{
@@ -273,7 +296,45 @@ namespace Optimization.Runner
 			}
 		}
 		
-		private void ShowOptimizers()
+		private void ShowOptimizer(Optimizer opt)
+		{
+			Type type = opt.GetType();
+			string description = opt.Description;
+			
+			PrintColored("Name", OptimizerName(type));
+			PrintColored("Namespace", type.Namespace);
+			PrintColored("Description", !String.IsNullOrEmpty(description) ? description : "No description available");
+			
+			ShowSettings(opt.Configuration);
+		}
+		
+		private string[] ExtensionAppliesTo(Extension ext)
+		{
+			Type[] applies = ext.AppliesTo;
+			string[] ret = new string[applies.Length];
+			
+			for (int i = 0; i < applies.Length; ++i)
+			{
+				ret[i] = OptimizerName(applies[i]);
+			}
+			
+			return ret;
+		}
+		
+		private void ShowExtension(Extension ext)
+		{
+			Type type = ext.GetType();
+			string description = ext.Description;
+
+			PrintColored("Name", ExtensionName(type));
+			PrintColored("Namespace", type.Namespace);
+			PrintColored("Description", !String.IsNullOrEmpty(description) ? description : "No description available");
+			PrintColored("Extends", String.Join(",", ExtensionAppliesTo(ext)));
+			
+			ShowSettings(ext.Configuration);
+		}
+		
+		private void ShowTypes()
 		{
 			List<Type> types = new List<Type>(Registry.Optimizers);
 			
@@ -285,7 +346,21 @@ namespace Optimization.Runner
 			{
 				string description = Optimizer.GetDescription(type);
 				
-				PrintColored(OptimizerName(type), description != null ? description : "No description available");
+				PrintColored(OptimizerName(type), !String.IsNullOrEmpty(description) ? description : "No description available");
+			}
+			
+			System.Console.WriteLine();
+			
+			System.Console.WriteLine("\nAvailable extensions:\n");
+			
+			types = new List<Type>(Extension.Extensions);
+			types.Sort(delegate (Type a, Type b) { return ExtensionName(a).CompareTo(ExtensionName(b)); });
+
+			foreach (Type type in Extension.Extensions)
+			{
+				string description = Extension.GetDescription(type);
+				
+				PrintColored(ExtensionName(type), !String.IsNullOrEmpty(description) ? description : "No description available");
 			}
 			
 			System.Console.WriteLine();
@@ -302,7 +377,7 @@ namespace Optimization.Runner
 			
 			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) { AddAssembly(s); });
 			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) { d_dataDirectory = s; });
-			optionSet.Add("l:|list:", "List available optimizers", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
+			optionSet.Add("l:|list:", "List available optimizers and extensions", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
 			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
 			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) { d_repeat = UInt32.Parse(s); });
 		}

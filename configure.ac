@@ -46,7 +46,7 @@ fi
 
 
 dnl package checks, common for all configs
-PKG_CHECK_MODULES([OPTIMIZATION_SHARP], [optimization-sharp-2.0 >= 2.8])
+PKG_CHECK_MODULES([OPTIMIZATION_SHARP], [optimization-sharp-2.0 >= 2.9])
 
 dnl find assembly paths for unstable installed assemblies that will be
 dnl copied into monoskel installation directory for local usage with the app

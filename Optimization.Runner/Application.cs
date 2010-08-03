@@ -37,7 +37,6 @@ namespace Optimization.Runner
 		public Application(ref string[] args) : base(ref args)
 		{
 			d_jobFiles = args;
-			d_repeat = 1;
 		}
 		
 		protected abstract Visual CreateVisual();
@@ -53,6 +52,7 @@ namespace Optimization.Runner
 
 			d_assemblies = new List<string>();
 			d_listOptimizers = null;
+			d_repeat = 1;
 		}
 		
 		public void Run()
@@ -98,7 +98,7 @@ namespace Optimization.Runner
 					Error("Job file `{0}' does not exist!", filename);
 					continue;
 				}
-
+				
 				for (uint i = 0; i < d_repeat; ++i)
 				{
 					try

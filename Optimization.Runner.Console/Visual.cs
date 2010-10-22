@@ -16,23 +16,22 @@ namespace Optimization.Runner.Console
 		
 		protected override void OnError(object source, string message)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Red;
-			System.Console.Error.WriteLine("[Error] " + message);
-			System.Console.ResetColor();
+			System.Console.Error.WriteLine("\x1b[31m[Error] {0}\x1b[0m", message);
+		}
+
+		protected override void OnWarning(object source, string message)
+		{
+			System.Console.Error.WriteLine("\x1b[33m[Warning] {0}\x1b[0m", message);
 		}
 		
 		protected override void OnMessage(object source, string message)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Green;
-			System.Console.Error.WriteLine("[Message] " + message);
-			System.Console.ResetColor();
+			System.Console.Error.WriteLine("\x1b[32m[Message] {0}\x1b[0m", message);
 		}
 	
 		protected override void OnJob(object source, Optimization.Job job)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Blue;
-			System.Console.WriteLine("[Started new job {0} => {1}]", job.Name, job.Optimizer.Name);
-			System.Console.ResetColor();
+			System.Console.WriteLine("\x1b[34m[Started new job {0} => {1}]\x1b[0m", job.Name, job.Optimizer.Name);
 		}
 	
 		protected override void OnProgress(object source, double progress)

@@ -8,7 +8,7 @@ ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:3 -optimize- -debug "-
 ASSEMBLY = bin/Debug/optirunner.exe
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = exe
-PROJECT_REFERENCES = 
+PROJECT_REFERENCES =
 BUILD_DIR = bin/Debug
 
 OPTIRUNNER_EXE_MDB_SOURCE=bin/Debug/optirunner.exe.mdb
@@ -20,9 +20,9 @@ if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = gmcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize-
 ASSEMBLY = bin/Release/optirunner.exe
-ASSEMBLY_MDB = 
+ASSEMBLY_MDB =
 COMPILE_TARGET = exe
-PROJECT_REFERENCES = 
+PROJECT_REFERENCES =
 BUILD_DIR = bin/Release
 
 OPTIRUNNER_EXE_MDB=
@@ -36,32 +36,32 @@ PROGRAMFILES = \
 	$(OPTIRUNNER_EXE_MDB)
 
 BINARIES = \
-	$(OPTIRUNNER)  
+	$(OPTIRUNNER)
 
 
 RESGEN=resgen2
-	
-all: $(ASSEMBLY) $(PROGRAMFILES) $(BINARIES) 
+
+all: $(ASSEMBLY) $(PROGRAMFILES) $(BINARIES)
 
 FILES = \
 	Optimization.Runner/Application.cs \
 	Optimization.Runner.Console/Visual.cs \
 	Optimization.Runner.Console/Application.cs \
-	Optimization.Runner.Console/AssemblyInfo.cs 
+	Optimization.Runner.Console/AssemblyInfo.cs
 
-DATA_FILES = 
+DATA_FILES =
 
-RESOURCES = 
+RESOURCES =
 
 EXTRAS = \
-	optirunner.in 
+	optirunner.in
 
 REFERENCES = \
 	$(OPTIMIZATION_SHARP_LIBS)
 
 DLL_REFERENCES =
 
-CLEANFILES = $(PROGRAMFILES) $(BINARIES) 
+CLEANFILES = $(PROGRAMFILES) $(BINARIES)
 
 include $(top_srcdir)/Makefile.include
 OPTIRUNNER = $(BUILD_DIR)/optirunner
@@ -80,9 +80,11 @@ $(ASSEMBLY) $(ASSEMBLY_MDB): $(build_sources) $(build_resources) $(build_datafil
 install-data-hook:
 	for ASM in $(INSTALLED_ASSEMBLIES); do \
 		$(INSTALL) -c -m 0755 $$ASM $(DESTDIR)$(pkglibdir); \
+		$(INSTALL) -c -m 0755 $$ASM.mdb $(DESTDIR)$(pkglibdir); \
 	done;
 
 uninstall-hook:
 	for ASM in $(INSTALLED_ASSEMBLIES); do \
 		rm -f $(DESTDIR)$(pkglibdir)/`basename $$ASM`; \
+		rm -f $(DESTDIR)$(pkglibdir)/`basename $$ASM`.mdb; \
 	done;

@@ -16,8 +16,16 @@ namespace Optimization.Runner.Console
 		public static void Main(string[] args)
 		{
 			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-			Application application = new Application(ref args);
-			application.Run();
+
+			try
+			{
+				Application application = new Application(ref args);
+				application.Run();
+			}
+			catch (Exception e)
+			{
+				System.Console.Error.WriteLine("An error occurred: {0}", e.Message);
+			}
 		}
 	}
 }

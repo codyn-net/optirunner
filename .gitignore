@@ -1,0 +1,15 @@
+autom4te.cache
+config.log
+config.status
+configure
+*.m4
+bin
+Makefile
+Makefile.include
+missing
+optirunner
+*.pidb
+*.userprefs
+*.tar.gz
+install-sh
+Makefile.in

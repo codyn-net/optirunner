@@ -28,19 +28,23 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Optimization, Version=1.0.3753.26983, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\liboptimization2-sharp\Optimization.dll</HintPath>
-    </Reference>
     <Reference Include="protobuf-net, Version=1.0.0.262, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\liboptimization2-sharp\protobuf-net.dll</HintPath>
     </Reference>
+    <Reference Include="Optimization, Version=1.0.4091.35500, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\home\jvanden\.packeteer\install\lib\liboptimization2-sharp\Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="Mono.Data.SqliteClient" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Optimization.Runner\Application.cs" />
     <Compile Include="Optimization.Runner.Console\Visual.cs" />
     <Compile Include="Optimization.Runner.Console\Application.cs" />
     <Compile Include="Optimization.Runner.Console\AssemblyInfo.cs" />
+    <Compile Include="Optimization.Runner\InitialPopulation.cs" />
+    <Compile Include="Optimization.Runner\Database.cs" />
   </ItemGroup>
 </Project>

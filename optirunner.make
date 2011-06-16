@@ -45,6 +45,8 @@ all: $(ASSEMBLY) $(PROGRAMFILES) $(BINARIES)
 
 FILES = \
 	Optimization.Runner/Application.cs \
+	Optimization.Runner/InitialPopulation.cs \
+	Optimization.Runner/Database.cs \
 	Optimization.Runner.Console/Visual.cs \
 	Optimization.Runner.Console/Application.cs \
 	Optimization.Runner.Console/AssemblyInfo.cs
@@ -57,6 +59,8 @@ EXTRAS = \
 	optirunner.in
 
 REFERENCES = \
+	Mono.Data.SqliteClient \
+	System.Data \
 	$(OPTIMIZATION_SHARP_LIBS)
 
 DLL_REFERENCES =

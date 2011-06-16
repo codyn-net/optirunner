@@ -33,6 +33,7 @@ namespace Optimization.Runner
 		string d_listOptimizers;
 		string d_filename;
 		uint d_repeat;
+		string d_initialPopulation;
 	
 		public Application(ref string[] args) : base(ref args)
 		{
@@ -71,6 +72,20 @@ namespace Optimization.Runner
 				}
 				
 				Environment.Exit(0);
+			}
+			
+			if (d_initialPopulation != null)
+			{
+				InitialPopulation ip = new InitialPopulation(d_jobFiles);
+				
+				if (ip.Generate(d_initialPopulation))
+				{
+					Environment.Exit(0);
+				}
+				else
+				{
+					Environment.Exit(1);
+				}
 			}
 	
 			if (d_jobFiles.Length == 0)
@@ -141,7 +156,10 @@ namespace Optimization.Runner
 					}
 					catch (Exception e)
 					{
-						System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e);
+						System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e.GetBaseException().Message);
+						System.Console.Error.WriteLine("  Trace:");
+						System.Console.Error.WriteLine("  ======");
+						System.Console.Error.WriteLine("  {0}", e.StackTrace.Replace("\n", "\n  "));
 					}
 				}
 			}
@@ -380,6 +398,7 @@ namespace Optimization.Runner
 			optionSet.Add("l:|list:", "List available optimizers and extensions", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
 			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
 			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) { d_repeat = UInt32.Parse(s); });
+			optionSet.Add("g=|generate-initial-population=", "Generate initial population file", delegate (string s) { d_initialPopulation = s; });
 		}
 	}
 }

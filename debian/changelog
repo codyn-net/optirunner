@@ -1,3 +1,11 @@
+optirunner (2.15-1) UNRELEASED; urgency=low
+
+  * New upstream release
+  * Depend on optimization sharp 2.15
+  * Implemented basic initialization from initial population
+
+ -- Jesse van den Kieboom <jvanden@grijpc10.epfl.ch>  Thu, 16 Jun 2011 15:34:49 +0200
+
 optirunner (2.14-1) UNRELEASED; urgency=low
 
   * New upstream release

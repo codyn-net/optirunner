@@ -3,10 +3,10 @@ Priority: extra
 Maintainer: Jesse van den Kieboom <jesse.vandenkieboom@epfl.ch>
 Build-Depends: debhelper (>= 7),
                autotools-dev,
-			   cdbs,
-			   pkg-config,
-			   mono-devel | mono-gmcs,
-			   liboptimization2-sharp (>= 2.14)
+               cdbs,
+               pkg-config,
+               mono-devel | mono-gmcs,
+               liboptimization2-sharp (>= 2.15)
 Standards-Version: 3.8.0
 Section: libs
 Homepage: http://birg.epfl.ch

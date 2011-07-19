@@ -302,7 +302,14 @@ namespace Optimization.Runner
 				}
 				else
 				{
-					System.Console.Write(setting.Value.ToString());
+					if (setting.Value == null)
+					{
+						System.Console.Write("null");
+					}
+					else
+					{
+						System.Console.Write(setting.Value.ToString());
+					}
 				}
 	
 				System.Console.WriteLine();

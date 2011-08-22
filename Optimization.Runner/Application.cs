@@ -302,7 +302,14 @@ namespace Optimization.Runner
 				}
 				else
 				{
-					System.Console.Write(setting.Value.ToString());
+					if (setting.Value == null)
+					{
+						System.Console.Write("null");
+					}
+					else
+					{
+						System.Console.Write(setting.Value.ToString());
+					}
 				}
 	
 				System.Console.WriteLine();
@@ -398,7 +405,7 @@ namespace Optimization.Runner
 			optionSet.Add("l:|list:", "List available optimizers and extensions", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
 			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
 			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) { d_repeat = UInt32.Parse(s); });
-			optionSet.Add("g=|generate-initial-population=", "Generate initial population file", delegate (string s) { d_initialPopulation = s; });
+			optionSet.Add("g=|generate-initial-population=", "Generate initial population into the specified file. Additional command line arguments are databases from which the initial population is drawn. Specific iteration/solution can be specified using 'filename.db[:iteration-id[:solution-id]]'.", delegate (string s) { d_initialPopulation = s; });
 		}
 	}
 }

@@ -1,3 +1,10 @@
+optirunner (2.18-1) UNRELEASED; urgency=low
+
+  * New upstream release
+  * Depend on optimization sharp 2.18
+
+ -- Jesse van den Kieboom <jvanden@grijpc10.epfl.ch>  Thu, 22 Sep 2011 18:29:13 +0200
+
 optirunner (2.17-1) UNRELEASED; urgency=low
 
   * New upstream release

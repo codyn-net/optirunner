@@ -1,3 +1,10 @@
+optirunner (2.19-1) UNRELEASED; urgency=low
+
+  * New upstream release
+  * Depend on optimization sharp 2.19
+
+ -- Jesse van den Kieboom <jvanden@biorobpc21.epfl.ch>  Mon, 09 Jan 2012 15:46:53 +0100
+
 optirunner (2.18-1) UNRELEASED; urgency=low
 
   * New upstream release

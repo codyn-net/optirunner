@@ -1,6 +1,6 @@
 using System;
 using System.Data;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 using System.Collections.Generic;
 
 namespace Optimization.Runner

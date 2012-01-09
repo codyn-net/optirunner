@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Data;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 using System.Collections.Generic;
 using System.Text;
 

@@ -59,7 +59,7 @@ EXTRAS = \
 	optirunner.in
 
 REFERENCES = \
-	Mono.Data.SqliteClient \
+	Mono.Data.Sqlite \
 	System.Data \
 	$(OPTIMIZATION_SHARP_LIBS)
 

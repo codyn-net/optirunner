@@ -1,3 +1,9 @@
+optirunner (2.21-1) precise; urgency=low
+
+  * New upstream version 2.21
+
+ -- Alexandre Tuleu <alexandre.tuleu.2005@polytechnique.org>  Wed, 30 May 2012 18:13:04 +0200
+
 optirunner (2.20-1) UNRELEASED; urgency=low
 
   * New upstream release

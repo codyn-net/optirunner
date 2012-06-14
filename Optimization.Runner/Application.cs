@@ -17,7 +17,6 @@
  * along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
-
 using System;
 using Optimization;
 using System.Reflection;
@@ -34,6 +33,7 @@ namespace Optimization.Runner
 		string d_filename;
 		uint d_repeat;
 		string d_initialPopulation;
+		uint d_nbest = 1;
 	
 		public Application(ref string[] args) : base(ref args)
 		{
@@ -78,7 +78,7 @@ namespace Optimization.Runner
 			{
 				InitialPopulation ip = new InitialPopulation(d_jobFiles);
 				
-				if (ip.Generate(d_initialPopulation))
+				if (ip.Generate(d_initialPopulation, d_nbest))
 				{
 					Environment.Exit(0);
 				}
@@ -159,7 +159,7 @@ namespace Optimization.Runner
 						System.Console.Error.WriteLine("Could not complete job `{0}': {1}", filename, e.GetBaseException().Message);
 						System.Console.Error.WriteLine("  Trace:");
 						System.Console.Error.WriteLine("  ======");
-						System.Console.Error.WriteLine("  {0}", e.StackTrace.Replace("\n", "\n  "));
+						System.Console.Error.WriteLine("  {0}", e.GetBaseException().StackTrace.Replace("\n", "\n  "));
 					}
 				}
 			}
@@ -363,7 +363,8 @@ namespace Optimization.Runner
 		{
 			List<Type> types = new List<Type>(Registry.Optimizers);
 			
-			types.Sort(delegate (Type a, Type b) { return OptimizerName(a).CompareTo(OptimizerName(b)); });
+			types.Sort(delegate (Type a, Type b) {
+				return OptimizerName(a).CompareTo(OptimizerName(b)); });
 			
 			System.Console.WriteLine("\nAvailable optimizers:\n");
 			
@@ -379,7 +380,8 @@ namespace Optimization.Runner
 			System.Console.WriteLine("\nAvailable extensions:\n");
 			
 			types = new List<Type>(Extension.Extensions);
-			types.Sort(delegate (Type a, Type b) { return ExtensionName(a).CompareTo(ExtensionName(b)); });
+			types.Sort(delegate (Type a, Type b) {
+				return ExtensionName(a).CompareTo(ExtensionName(b)); });
 
 			foreach (Type type in Extension.Extensions)
 			{
@@ -400,12 +402,20 @@ namespace Optimization.Runner
 		{
 			base.AddOptions(optionSet);
 			
-			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) { AddAssembly(s); });
-			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) { d_dataDirectory = s; });
-			optionSet.Add("l:|list:", "List available optimizers and extensions", delegate (string s) { d_listOptimizers = s != null ? s : ""; });
-			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) { d_filename = s; });
-			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) { d_repeat = UInt32.Parse(s); });
-			optionSet.Add("g=|generate-initial-population=", "Generate initial population into the specified file. Additional command line arguments are databases from which the initial population is drawn. Specific iteration/solution can be specified using 'filename.db[:iteration-id[:solution-id]]'.", delegate (string s) { d_initialPopulation = s; });
+			optionSet.Add("o=|optimizers=", "Load additional optimizer assemblies", delegate (string s) {
+				AddAssembly(s); });
+			optionSet.Add("d=|datadir=", "Specify directory to store data files", delegate (string s) {
+				d_dataDirectory = s; });
+			optionSet.Add("l:|list:", "List available optimizers and extensions", delegate (string s) {
+				d_listOptimizers = s != null ? s : ""; });
+			optionSet.Add("f=|filename=", "Results database filename", delegate (string s) {
+				d_filename = s; });
+			optionSet.Add("r=|repeat=", "Repeat job N times", delegate (string s) {
+				d_repeat = UInt32.Parse(s); });
+			optionSet.Add("g=|generate-initial-population=", "Generate initial population into the specified file. Additional command line arguments are databases from which the initial population is drawn. Specific iteration/solution can be specified using 'filename.db[:iteration-id[:solution-id]]'.", delegate (string s) {
+				d_initialPopulation = s; });
+			optionSet.Add("n=|select-n-best=", "Select N-best solutions to generate initial population from.", delegate (string s) {
+				d_nbest = UInt32.Parse(s); });
 		}
 	}
 }

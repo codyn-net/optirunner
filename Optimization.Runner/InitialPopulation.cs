@@ -213,6 +213,7 @@ namespace Optimization.Runner
 			List<int> solutions = new List<int>();
 
 			bool stagepso = false;
+			bool pso = false;
 
 			db.Query("SELECT name from extensions", (reader) => {
 				string name = (string)reader.GetString(0);
@@ -226,6 +227,18 @@ namespace Optimization.Runner
 				return true;
 			});
 
+			db.Query("SELECT name from job", (reader) => {
+				string name = (string)reader.GetString(0);
+
+				if (name.ToLower() == "pso")
+				{
+					pso = true;
+					return false;
+				}
+
+				return true;
+			});
+
 			string q;
 			List<object> pars = new List<object>();
 
@@ -233,27 +246,11 @@ namespace Optimization.Runner
 			{
 				if (stagepso)
 				{
-					if (d_nbest == 1)
-					{
-						q = "SELECT solution.`iteration`, solution.`index` from solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
-					}
-					else
-					{
-						// This is the most INefficient query that I could come up with
-						q = "SELECT solution.`iteration`, solution.`index` FROM solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) WHERE fitness = (SELECT fitness FROM solution AS S LEFT JOIN data ON (data.`index` = S.`index` AND data.`iteration` = S.`iteration`) WHERE solution.`index` = S.`index` ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC LIMIT 1) ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
-					}
+					q = "SELECT solution.`iteration`, solution.`index` from solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
 				}
 				else
 				{
-					if (d_nbest == 1)
-					{
-						q = "SELECT `iteration`, `index` FROM `solution` ORDER BY `fitness` DESC";
-					}
-					else
-					{
-						// This is the most INefficient query that I could come up with
-						q = "SELECT `iteration`, `index` FROM solution WHERE fitness = (SELECT fitness FROM solution AS S WHERE solution.`index` = S.`index` ORDER BY fitness DESC LIMIT 1) ORDER BY fitness DESC";
-					}
+					q = "SELECT `iteration`, `index` FROM `solution` ORDER BY `fitness` DESC";
 				}
 			}
 			else if (spec.Iteration == -1)
@@ -289,12 +286,32 @@ namespace Optimization.Runner
 				pars.Add(spec.Solution);
 			}
 
-			q += String.Format(" LIMIT @{0}", pars.Count);
-			pars.Add(d_nbest);
+			if (d_nbest == 1)
+			{
+				q += String.Format(" LIMIT 1");
+			}
+
+			int numhad = 0;
+			int lastsol = -1;
 
 			db.Query(q, (reader) => {
-				iterations.Add((int)reader.GetInt64(0));
-				solutions.Add((int)reader.GetInt64(1));
+				int cit = (int)reader.GetInt64(0);
+				int csol = (int)reader.GetInt64(1);
+
+				if (!pso || lastsol != csol)
+				{
+					iterations.Add(cit);
+					solutions.Add(csol);
+
+					lastsol = csol;
+					++numhad;
+				}
+
+				if (numhad >= d_nbest)
+				{
+					return false;
+				}
+
 				return true;
 			}, pars.ToArray());
 

@@ -1,0 +1,30 @@
+<Project name="optirunner" fileversion="2.0" DefaultNamespace="Optimization.Runner.Console" language="C#" Configuration="Debug" Platform="AnyCPU" AssemblyName="optirunner" targetFramework="4.0" ctype="DotNetProject">
+  <Configurations active="Debug">
+    <Configuration name="Debug" Optimize="false" DefineConstants="DEBUG" WarningLevel="3" ctype="DotNetProjectConfiguration">
+      <Output directory="bin/Debug" assembly="optirunner" />
+      <Build debugmode="True" target="Exe" />
+      <Execution consolepause="True" runwithwarnings="True" runtime="MsNet" />
+      <CodeGeneration compiler="Mcs" warninglevel="3" optimize="False" unsafecodeallowed="False" generateoverflowchecks="False" definesymbols="DEBUG" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+    <Configuration name="Release" Optimize="false" WarningLevel="4" ctype="DotNetProjectConfiguration">
+      <Output directory="bin/Release" assembly="optirunner" />
+      <Build debugmode="False" target="Exe" />
+      <Execution consolepause="True" runwithwarnings="True" runtime="MsNet" />
+      <CodeGeneration compiler="Mcs" warninglevel="4" optimize="False" unsafecodeallowed="False" generateoverflowchecks="False" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+  </Configurations>
+  <Contents>
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner/Application.cs" />
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner.Console/Visual.cs" />
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner.Console/Application.cs" />
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner.Console/AssemblyInfo.cs" />
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner/InitialPopulation.cs" />
+    <File subtype="Code" buildaction="Compile" name="Optimization.Runner/Database.cs" />
+  </Contents>
+  <References>
+    <ProjectReference specificVersion="False" type="Gac" localcopy="True" refto="protobuf-net, Version=1.0.0.262, Culture=neutral, PublicKeyToken=257b51d87d2e4d67" />
+    <ProjectReference specificVersion="False" type="Gac" localcopy="True" refto="Optimization, Version=1.0.4091.35500, Culture=neutral, PublicKeyToken=null" />
+    <ProjectReference type="Gac" localcopy="True" refto="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <ProjectReference type="Gac" localcopy="True" refto="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+  </References>
+</Project>

@@ -24,7 +24,7 @@ namespace Optimization.Runner.Console
 			}
 			catch (Exception e)
 			{
-				System.Console.Error.WriteLine("An error occurred: {0}", e.Message);
+				System.Console.Error.WriteLine("An error occurred: {0}\n======\n{1}", e.Message, e.StackTrace);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 dnl Warning: This is an automatically generated file, do not edit!
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.54])
-AC_INIT(optirunner, 2.21)
+AC_INIT(optirunner, 2.22)
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -17,11 +17,11 @@ SHAMROCK_EXPAND_DATADIR
 
 AC_PROG_INSTALL
 
-AC_PATH_PROG(GMCS, gmcs, no)
-if test "x$GMCS" = "xno"; then
-        AC_MSG_ERROR([gmcs Not found])
-fi
+AC_PATH_PROGS(CMCS, dmcs gmcs, no)
 
+if test "x$CMCS" = "xno"; then
+	AC_MSG_ERROR([dmcs nor gmcs found])
+fi
 
 AC_ARG_ENABLE(debug,
 	AC_HELP_STRING([--enable-debug],

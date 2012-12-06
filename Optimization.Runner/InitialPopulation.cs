@@ -42,6 +42,7 @@ namespace Optimization.Runner
 		private string d_dataQueryColumns;
 		private List<string> d_parameterColumns;
 		private List<string> d_dataColumns;
+		private uint d_nbest;
 
 		public InitialPopulation(string[] args)
 		{
@@ -60,14 +61,24 @@ namespace Optimization.Runner
 			if (!d_openDatabases.TryGetValue(filename, out ret))
 			{
 				ret = new Database(filename);
+
+				ret.Query("PRAGMA synchronous = OFF;");
 				d_openDatabases[filename] = ret;
 			}
 			
 			return ret;
 		}
 		
-		public bool Generate(string outfile)
+		public bool Generate(string outfile, uint nbest)
 		{
+			d_nbest = nbest;
+
+			if (File.Exists(outfile))
+			{
+				System.Console.Error.WriteLine("The file `{0}' already exists...", outfile);
+				Environment.Exit(1);
+			}
+
 			if (d_args.Length == 0)
 			{
 				System.Console.Error.WriteLine("Please provide input databases");
@@ -109,6 +120,12 @@ namespace Optimization.Runner
 				if (!column.StartsWith("_d_"))
 				{
 					continue;
+				}
+
+				if (!String.IsNullOrEmpty(dataQuery.ToString()))
+				{
+					dataQuery.Append(", ");
+					ddcreate.Append(", ");
 				}
 				
 				d_dataColumns.Add(column.Substring(3));
@@ -155,10 +172,22 @@ namespace Optimization.Runner
 			
 			return ret;
 		}
+
+		private List<string> ParameterNames(Database db)
+		{
+			List<string> ret = new List<string>();
+
+			db.Query("SELECT name FROM parameters", (reader) => {
+				ret.Add((string)reader.GetString(0));
+				return true;
+			});
+
+			return ret;
+		}
 		
 		private bool SimilarDatabase(Database db)
 		{
-			List<string> pars = new List<string>(db.ColumnNames("parameters"));
+			List<string> pars = new List<string>(ParameterNames(db));
 			List<string> orig = new List<string>(d_parameterColumns);
 
 			pars.RemoveAll(delegate (string a) {
@@ -180,70 +209,145 @@ namespace Optimization.Runner
 		
 		private void AddPopulation(Database db, DbSpec spec)
 		{
-			int iteration = spec.Iteration;
-			int solution = spec.Solution;
-			
+			List<int> iterations = new List<int>();
+			List<int> solutions = new List<int>();
+
+			bool stagepso = false;
+			bool pso = false;
+
+			db.Query("SELECT name from extensions", (reader) => {
+				string name = (string)reader.GetString(0);
+
+				if (name == "StagePSO")
+				{
+					stagepso = true;
+					return false;
+				}
+
+				return true;
+			});
+
+			db.Query("SELECT name from job", (reader) => {
+				string name = (string)reader.GetString(0);
+
+				if (name.ToLower() == "pso")
+				{
+					pso = true;
+					return false;
+				}
+
+				return true;
+			});
+
+			string q;
+			List<object> pars = new List<object>();
+
 			if (spec.Iteration == -1 && spec.Solution == -1)
 			{
-				object[] ret = db.QueryFirst("SELECT `index`, `iteration` FROM `solution` ORDER BY `fitness` DESC LIMIT 1");
-				
-				if (ret == null)
+				if (stagepso)
 				{
-					return;
+					q = "SELECT solution.`iteration`, solution.`index` from solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
 				}
-				
-				iteration = (int)ret[0];
-				solution = (int)ret[1];
+				else
+				{
+					q = "SELECT `iteration`, `index` FROM `solution` ORDER BY `fitness` DESC";
+				}
 			}
 			else if (spec.Iteration == -1)
 			{
-				object ret = db.QueryValue("SELECT `iteration` FROM solution WHERE `index` = @0 ORDER BY `fitness` DESC LIMIT 1", solution);
-				
-				if (ret == null)
+				if (stagepso)
 				{
-					return;
+					q = "SELECT solution.`iteration`, solution.`index` from solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) WHERE solution.`index` = @0 ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
+				}
+				else
+				{
+					q = "SELECT `iteration`, `index` FROM solution WHERE `index` = @0 ORDER BY `fitness` DESC";
 				}
 
-				iteration = (int)ret;
+				pars.Add(spec.Solution);
 			}
 			else if (spec.Solution == -1)
 			{
-				object ret = db.QueryValue("SELECT `index` FROM solution WHERE `iteration` = @0 ORDER BY `fitness` DESC LIMIT 1", iteration);
-				
-				if (ret == null)
+				if (stagepso)
 				{
-					return;
+					q = "SELECT solution.`iteration`, solution.`index` from solution LEFT JOIN data ON (data.`index` = solution.`index` AND data.`iteration` = solution.`iteration`) WHERE solution.`iteration` = @0 ORDER BY data.`_d_StagePSO::stage` DESC, fitness DESC";
+				}
+				else
+				{
+					q = "SELECT `iteration`, `index` FROM solution WHERE `iteration` = @0 ORDER BY `fitness` DESC";
 				}
 
-				solution = (int)ret;
+				pars.Add(spec.Iteration);
+			}
+			else
+			{
+				q = "SELECT `iteration`, `index` FROM solution WHERE `iteration` = @0 AND `index` = @1";
+				pars.Add(spec.Iteration);
+				pars.Add(spec.Solution);
 			}
 
-			object[] rs = db.QueryFirst("SELECT " + d_parameterQueryColumns + " FROM `parameter_values` WHERE `iteration` = @0 AND `index` = @1", iteration, solution);
-			
-			// Insert this solution in the initial population table
-			List<string> vall = new List<string>();
-			
-			for (int i = 0; i < rs.Length; ++i)
+			if (d_nbest == 1)
 			{
-				vall.Add(String.Format("@{0}", i));
+				q += String.Format(" LIMIT 1");
 			}
-			
-			string valp = String.Join(", ", vall.ToArray());
 
-			d_database.Query("INSERT INTO `initial_population` (" + d_parameterQueryColumns + ") VALUES (" + valp + ")", rs);
-			
-			rs = db.QueryFirst("SELECT " + d_dataQueryColumns + " FROM `data` WHERE `iteration` = @0 AND `index` = @1", iteration, solution);
-			
-			vall.Clear();
-			
-			for (int i = 0; i < rs.Length; ++i)
+			int numhad = 0;
+			int lastsol = -1;
+
+			db.Query(q, (reader) => {
+				int cit = (int)reader.GetInt64(0);
+				int csol = (int)reader.GetInt64(1);
+
+				if (!pso || lastsol != csol)
+				{
+					iterations.Add(cit);
+					solutions.Add(csol);
+
+					lastsol = csol;
+					++numhad;
+				}
+
+				if (numhad >= d_nbest)
+				{
+					return false;
+				}
+
+				return true;
+			}, pars.ToArray());
+
+			for (int j = 0; j < iterations.Count; ++j)
 			{
-				vall.Add(String.Format("@{0}", i));
+				int iteration = iterations[j];
+				int solution = solutions[j];
+
+				q = "SELECT " + d_parameterQueryColumns + " FROM `parameter_values` WHERE `iteration` = @0 AND `index` = @1";
+				object[] rs = db.QueryFirst(q, iteration, solution);
+			
+				// Insert this solution in the initial population table
+				List<string> vall = new List<string>();
+			
+				for (int i = 0; i < rs.Length; ++i)
+				{
+					vall.Add(String.Format("@{0}", i));
+				}
+			
+				string valp = String.Join(", ", vall.ToArray());
+
+				d_database.Query("INSERT INTO `initial_population` (" + d_parameterQueryColumns + ") VALUES (" + valp + ")", rs);
+
+				rs = db.QueryFirst("SELECT " + d_dataQueryColumns + " FROM `data` WHERE `iteration` = @0 AND `index` = @1", iteration, solution);
+			
+				vall.Clear();
+			
+				for (int i = 0; i < rs.Length; ++i)
+				{
+					vall.Add(String.Format("@{0}", i));
+				}
+			
+				valp = String.Join(", ", vall.ToArray());
+			
+				d_database.Query("INSERT INTO `initial_population_data` (" + d_dataQueryColumns + ") VALUES (" + valp + ")", rs);
 			}
-			
-			valp = String.Join(", ", vall.ToArray());
-			
-			d_database.Query("INSERT INTO `initial_population_data` (" + d_dataQueryColumns + ") VALUES (" + valp + ")", rs);
 		}
 	}
 }

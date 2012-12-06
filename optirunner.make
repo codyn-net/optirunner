@@ -92,3 +92,5 @@ uninstall-hook:
 		rm -f $(DESTDIR)$(pkglibdir)/`basename $$ASM`; \
 		rm -f $(DESTDIR)$(pkglibdir)/`basename $$ASM`.mdb; \
 	done;
+
+.NOTPARALLEL:

@@ -1,3 +1,10 @@
+optirunner (2.23-1) UNRELEASED; urgency=low
+
+  * New upstream release
+  * Depend on latest liboptimization-sharp
+
+ -- Jesse van den Kieboom <jesse.vandenkieboom@epfl.ch>  Sun, 17 Mar 2013 18:12:23 +0100
+
 optirunner (2.22-1) UNRELEASED; urgency=low
 
   * New upstream release
